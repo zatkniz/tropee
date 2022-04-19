@@ -1,12 +1,23 @@
 <template>
   <div class="basis-1/2 pl-28 mt-3 pr-5">
     <h2 class="text-xl bold font-bold mb-7">Event Details</h2>
-    <div class="flex flex-col mb-9">
+    <div class="flex flex-col mb-9 relative">
       <label class="text-sm text-gray-700 mb-1">Enter your email here</label>
-      <input
-        class="border-gray-300 border rounded py-2 px-3"
-        placeholder="example@email.com"
-      />
+      <div class="relative">
+        <input
+          v-model="email"
+          class="border-gray-300 border rounded py-2 px-3 w-full"
+          :class="{ 'border-red-500': emailHasError }"
+          placeholder="example@email.com"
+          @keyup="resetEmailError"
+        />
+        <div
+          v-if="emailHasError"
+          class="absolute text-xs text-red-500 error-text"
+        >
+          There email is not valid.
+        </div>
+      </div>
     </div>
     <div class="flex flex-col gap-5">
       <div class="flex items-center gap-7">
@@ -14,7 +25,7 @@
         <span class="text-gray-500 text-base flex">Date:</span>
         <datepicker
           class="ml-12"
-          v-model="picked"
+          v-model="selectedDate"
           inputFormat="dd/MM/yyyy"
           :lower-limit="limitPreviousDays"
         />
@@ -23,7 +34,7 @@
         <BaseIcon name="time" class="mt-1 ml-1" />
         <span class="text-gray-500 text-base flex"> Time:</span>
         <vue-timepicker
-          v-model="simpleStringValue"
+          v-model="selectedTime"
           format="h:mm A"
           :minute-interval="30"
           class="rounded ml-10"
@@ -51,7 +62,9 @@
         <CountDown />
       </div>
       <button
-        class="rounded w-full bg-gray-400 text-gray-500 font-bold mt-11 py-2"
+        @click="sendRequest"
+        :disabled="email.length == 0"
+        class="rounded w-full bg-gray-400 text-gray-500 font-bold mt-11 py-2 disabled:opacity-40"
       >
         Count me in!
       </button>
@@ -68,6 +81,11 @@ import moment from "moment";
 import "moment-timezone";
 import { Ref, ref } from "vue";
 
+const initialTime = "12:30 PM";
+
+const email: Ref<string> = ref("");
+const emailHasError: Ref<boolean> = ref(false);
+
 /**
  * Model assigned to date picker
  * Initial Day is the next day from today
@@ -75,7 +93,7 @@ import { Ref, ref } from "vue";
 const today: Date = new Date();
 const tomorrow: Date = new Date(today);
 const initialDate: number = tomorrow.setDate(tomorrow.getDate() + 1);
-const picked: Ref<number> = ref(initialDate);
+const selectedDate: Ref<number> = ref(initialDate);
 
 /**
  * Limits the datepicker so you cannot select previous dates
@@ -84,9 +102,8 @@ const limitPreviousDays: Ref<number> = ref(initialDate);
 
 /**
  * Sets the default time
- * It is not necessary to add var type when you assign value.
  */
-const simpleStringValue = "12:30 PM";
+const selectedTime: Ref<string> = ref(initialTime);
 
 /**
  * Use the names() function that moment uses to get an array of timezones.
@@ -98,6 +115,37 @@ const timeZones: string[] = moment.tz.names();
  * TODO: make the timezone dynamic from the users location
  */
 const selectedTimeZone = "Europe/Paris";
+
+/**
+ * Handles on click button
+ */
+const sendRequest = (): boolean | void => {
+  /**
+   * First validate the user email
+   */
+  if (!validateEmail(email.value)) {
+    return (emailHasError.value = true);
+  }
+
+  alert("Successfully registered for the event!");
+  email.value = "";
+  selectedDate.value = initialDate;
+  selectedTime.value = initialTime;
+};
+
+/**
+ *
+ * @param mail
+ * Validates the users email in input
+ */
+const validateEmail = (mail: string): boolean => {
+  return /^\w+([\\.-]?\w+)*@\w+([\\.-]?\w+)*(\.\w{2,3})+$/.test(mail);
+};
+
+/**
+ * Resets the error state on keyup so the user can type again his email
+ */
+const resetEmailError = () => (emailHasError.value = false);
 </script>
 
 <style lang="scss">
@@ -108,5 +156,9 @@ const selectedTimeZone = "Europe/Paris";
       @apply font-sans;
     }
   }
+}
+
+.error-text {
+  bottom: -20px;
 }
 </style>
