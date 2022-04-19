@@ -39,6 +39,7 @@
           :minute-interval="30"
           class="rounded ml-10"
           hide-clear-button
+          :key="updateKey"
         />
       </div>
       <div class="flex items-center">
@@ -85,7 +86,7 @@ const initialTime = "12:30 PM";
 
 const email: Ref<string> = ref("");
 const emailHasError: Ref<boolean> = ref(false);
-
+const updateKey = ref(0);
 /**
  * Model assigned to date picker
  * Initial Day is the next day from today
@@ -131,6 +132,7 @@ const sendRequest = (): boolean | void => {
   email.value = "";
   selectedDate.value = initialDate;
   selectedTime.value = initialTime;
+  updateKey.value += 1;
 };
 
 /**
