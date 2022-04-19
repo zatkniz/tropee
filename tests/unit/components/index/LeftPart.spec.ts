@@ -1,9 +1,9 @@
 import { shallowMount } from "@vue/test-utils";
-import HomeView from "@/views/HomeView.vue";
+import LeftPart from "@/components/index/LeftPart.vue";
 
-describe("HomeView component", () => {
+describe("LeftPart component", () => {
   it("renders successfully", () => {
-    const wrapper = shallowMount(HomeView);
+    const wrapper = shallowMount(LeftPart);
     expect(wrapper.exists()).toBeTruthy();
   });
 });

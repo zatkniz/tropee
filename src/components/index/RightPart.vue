@@ -15,7 +15,7 @@
           v-if="emailHasError"
           class="absolute text-xs text-red-500 error-text"
         >
-          There email is not valid.
+          The email is not valid.
         </div>
       </div>
     </div>
@@ -45,7 +45,7 @@
       <div class="flex items-center">
         <BaseIcon name="pin" class="mt-0 ml-1 mr-7" />
         <span class="text-gray-500 text-base flex mr-9">Timezone:</span>
-        <select v-model="selectedTimeZone" class="w-40">
+        <select v-model="selectedTimeZone" class="w-40 bg-white">
           <option
             v-for="timeZone in timeZones"
             :value="timeZone"
